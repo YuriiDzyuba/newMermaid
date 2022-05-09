@@ -1,0 +1,27 @@
+{
+  "name": "newmermaid",
+  "version": "1.0.0",
+  "description": "utility for generating architecture diagrams. Similar to mermaid.js, but with simpler and with limited scope",
+  "main": "index.js",
+  "author": "IuriiDziuba",
+  "license": "ISC",
+  "scripts": {
+    "start:dev": "ts-node-dev index.ts",
+    "test": "jest"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.4.0",
+    "jest": "^27.5.1",
+    "ts-jest": "^27.1.3",
+    "ts-node": "^10.7.0",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.5.5"
+  },
+  "dependencies": {
+    "@types/node": "^17.0.30"
+  }
+}
