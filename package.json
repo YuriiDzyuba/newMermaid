@@ -5,6 +5,7 @@
   "main": "index.js",
   "author": "IuriiDziuba",
   "license": "ISC",
+  "node": "16.15.0",
   "scripts": {
     "start:dev": "ts-node-dev index.ts",
     "test": "jest"
@@ -22,6 +23,12 @@
     "typescript": "^4.5.5"
   },
   "dependencies": {
-    "@types/node": "^17.0.30"
+    "@types/node": "^17.0.30",
+    "canvas": "^2.9.1",
+    "d3-graphviz": "^4.1.1",
+    "graphviz": "^0.0.9",
+    "graphviz-node": "^0.8.0",
+    "node-graphviz": "^0.1.0",
+    "tsviz": "^2.0.9"
   }
 }
