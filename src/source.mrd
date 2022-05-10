@@ -1,0 +1,8 @@
+sequenceDiagram
+    part: Client
+    part: Proxy
+    part: Server
+    rel: (Client >> Proxy) "Request proxy"
+    rel: (Client >> Server) "Request access token"
+    rel: (Client >> Server) "Request access token"
+    rel: (Proxy >> Server) "Send access token"
