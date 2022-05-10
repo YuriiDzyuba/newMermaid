@@ -24,11 +24,6 @@
   },
   "dependencies": {
     "@types/node": "^17.0.30",
-    "canvas": "^2.9.1",
-    "d3-graphviz": "^4.1.1",
-    "graphviz": "^0.0.9",
-    "graphviz-node": "^0.8.0",
-    "node-graphviz": "^0.1.0",
-    "tsviz": "^2.0.9"
+    "canvas": "^2.9.1"
   }
 }
