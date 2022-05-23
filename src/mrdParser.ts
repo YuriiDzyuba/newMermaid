@@ -1,87 +1,79 @@
 import * as fs from 'fs';
-import * as path from 'path'
-import { Participant } from "./sequintence/participant";
-import { Relation } from "./sequintence/relation";
+
+import { Participant } from './sequintence/participant';
+import { Relation } from './sequintence/relation';
 
 export class MrdParser {
-    path: string
-    private participants: Participant[]
-    private relations: Relation[]
+  private participants: Participant[];
+  private relations: Relation[];
 
-    constructor(path: string) {
-        this.path = path
-        this.parseMrd(this.path)
+  constructor(path: string) {
+    this.parseMrd(path);
+  }
+
+  private getSourceAndTargetParticipantNames(string) {
+    let relationDirection = string.substring(string.indexOf(`(`) + 1, string.lastIndexOf(`)`));
+
+    const splittedDirection = relationDirection.split('>>');
+    const sourceName = splittedDirection[0].trim();
+    const targetName = splittedDirection.pop().trim();
+
+    return {
+      sourceName,
+      targetName,
+    };
+  }
+
+  private getParticipantByName(name) {
+    const foundedParticipant = this.participants.find((e) => e.name === name);
+
+    if (!foundedParticipant) throw new Error(`cant find participant -- ${foundedParticipant}`);
+
+    return foundedParticipant;
+  }
+
+  private getRelationName(string) {
+    return string.substring(string.indexOf(`"`) + 1, string.lastIndexOf(`"`));
+  }
+
+  parseMrd(pathToFile) {
+    const fileContent = fs.readFileSync(pathToFile, 'utf-8');
+    const splitted = fileContent.split(`\n`);
+    const [diagramType, ...diagramBody] = splitted.map((e) => e.trim());
+
+    if (diagramType != 'sequenceDiagram') {
+      throw new Error('unimplemented diagram format');
     }
 
-    checkPath(path) {
-        if (true) {
-            this.path = path
-        }
-    }
+    diagramBody.forEach((e, i) => {
+      let splittedString = e.split(':');
 
-    private getSourceAndTargetNamesAndIndexes (string) {
-        let relationDirection = string.substring(
-            string.indexOf(`(`) + 1,
-            string.lastIndexOf(`)`)
-        );
+      switch (splittedString[0].trim()) {
+        case 'part':
+          this.participants
+            ? this.participants.push(new Participant(splittedString[1].trim(), i))
+            : (this.participants = [new Participant(splittedString[1].trim(), i)]);
+          break;
+        case 'rel':
+          const { sourceName, targetName } = this.getSourceAndTargetParticipantNames(splittedString[1]);
+          const relationName = this.getRelationName(splittedString[1]);
+          const sourceParticipant = this.getParticipantByName(sourceName);
+          const targetParticipant = this.getParticipantByName(targetName);
 
-        const splittedDirection = relationDirection.split('>>')
+          if (this.relations) {
+            this.relations.push(new Relation(sourceParticipant, targetParticipant, relationName));
+          } else {
+            this.relations = [new Relation(sourceParticipant, targetParticipant, relationName)];
+          }
+          break;
+      }
+    });
+  }
 
-        const sourceName = splittedDirection[0].trim()
-        const targetName = splittedDirection.pop().trim()
-
-        const sourceIndex = this.participants.find(e => e.name === sourceName)
-        const targetIndex = this.participants.find(e => e.name === targetName)
-
-        console.log(this.participants)
-        console.log(sourceName)
-        console.log(targetName)
-
-        // @ts-ignore
-        return { sourceName, targetName, sourceIndex: sourceIndex.order, targetIndex: targetIndex.order }
-    }
-
-    private getRelationName (string) {
-        return string.substring(
-            string.indexOf(`"`) + 1,
-            string.lastIndexOf(`"`)
-        );
-    }
-
-    parseMrd(pathToFile) {
-        const fileContent = fs.readFileSync(path.join(__dirname, './source.mrd'), 'utf-8')
-        const splitted = fileContent.split(`\n`)
-        const [ diagramType, ...diagramBody ] = splitted.map((e)=>e.trim())
-
-        if (diagramType!='sequenceDiagram'){
-          throw new Error('unimplemented diagram format')
-        }
-
-        diagramBody.forEach((e,i)=>{
-            let splittedString = e.split(':')
-
-            switch (splittedString[0].trim()) {
-                case 'part':
-                    this.participants
-                        ? this.participants.push(new Participant(splittedString[1].trim(), i))
-                        : this.participants = [new Participant(splittedString[1].trim(), i)]
-                    break;
-                case 'rel':
-                    const { sourceName, targetName, sourceIndex, targetIndex } = this.getSourceAndTargetNamesAndIndexes(splittedString[1])
-                    const relationName = this.getRelationName(splittedString[1])
-
-                    this.relations
-                        ? this.relations.push(new Relation(sourceName, targetName, sourceIndex, targetIndex, relationName))
-                        : this.relations = [new Relation(sourceName, targetName, sourceIndex, targetIndex, relationName)]
-                    break;
-            }
-        })
-    }
-
-    createDiagramStructure () {
-        return {
-            participants: this.participants,
-            relations: this.relations
-        }
-    }
+  createDiagramStructure() {
+    return {
+      participants: this.participants,
+      relations: this.relations,
+    };
+  }
 }
