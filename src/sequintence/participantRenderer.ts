@@ -1,8 +1,8 @@
 import { Participant } from './participant';
-import { ParticipantConfig, RendererConfig } from '../types/rendererConfig.type';
+import { ParticipantConfig } from '../types/rendererConfig.type';
 
 export class ParticipantRenderer {
-  private addLineToCanvas(context: CanvasRenderingContext2D, coordinates, config) {
+  private addLine(context: CanvasRenderingContext2D, coordinates, config) {
     context.strokeStyle = config.lineColor;
     context.lineWidth = config.lineWidth;
     context.beginPath();
@@ -16,7 +16,7 @@ export class ParticipantRenderer {
     coordinates,
     boxText,
     config: Omit<ParticipantConfig, 'lineColor' | 'lineWidth' | 'width'>,
-  ) {
+  ): void {
     context.font = config.font;
     context.textAlign = 'center';
     context.textBaseline = 'top';
@@ -47,7 +47,7 @@ export class ParticipantRenderer {
       const bottomX = topX;
       const bottomY = rowsNum * rowsHeight;
 
-      this.addLineToCanvas(context, { topX, topY, bottomX, bottomY }, { lineColor, lineWidth });
+      this.addLine(context, { topX, topY, bottomX, bottomY }, { lineColor, lineWidth });
       this.addBoxWithText(context, { x: topX, y: topY }, participants[i].name, restConfig);
       this.addBoxWithText(context, { x: bottomX, y: bottomY }, participants[i].name, restConfig);
     }
