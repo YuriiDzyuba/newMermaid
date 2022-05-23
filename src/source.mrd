@@ -1,8 +1,15 @@
 sequenceDiagram
     part: Client
-    part: Proxy
+    part: Client_Interceptor
+    part: сеть
+    part: Server_auth_middleware
     part: Server
-    rel: (Client >> Proxy) "Request proxy"
-    rel: (Client >> Server) "Request access token"
-    rel: (Client >> Server) "Request access token"
-    rel: (Proxy >> Server) "Send access token"
+    rel: (Client >> Server_auth_middleware) "Request with good accessToken"
+    rel: (Server_auth_middleware >> Server) "Request with good accessToken"
+    rel: (Server >> Client) "Response with new token pair"
+    rel: (Client >> Server_auth_middleware) "Request with bad accessToken"
+    rel: (Server_auth_middleware >> Client_Interceptor) "unauthorized error"
+    rel: (Client_Interceptor >> Client) "get refresh token from storage"
+    rel: (Client >> Server_auth_middleware) "Request with good refreshToken"
+    rel: (Server_auth_middleware >> Server) "generate new pair of tokens"
+    rel: (Server >> Client) "Response with new token pair"
