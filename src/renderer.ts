@@ -1,127 +1,58 @@
-import {DiagramType} from "./sequintence/diagram.type";
 import * as fs from 'fs';
-import {Participant} from "./sequintence/participant";
-import {Relation} from "./sequintence/relation";
+import { Buffer } from 'buffer';
 
-const { createCanvas, loadImage } = require('canvas')
+import { Diagram } from './types/diagram.type';
+import { NodeCanvas } from './types/nodeCanvas.interface';
+import { RendererConfig } from './types/rendererConfig.type';
+import { ParticipantRenderer } from './sequintence/participantRenderer';
+import { RelationRenderer } from './sequintence/relationRenderer';
+import { Participant } from './sequintence/participant';
+import { Relation } from './sequintence/relation';
+
+const { createCanvas } = require('canvas');
 
 export class Renderer {
-    private readonly background = '#acc4e2'
-    private readonly font = 'bold 20pt Menlo'
-    private readonly lineColor = '#8165b8'
-    private readonly arrowColor = '#8165b8'
-    private readonly textColor = '#fff'
-    private readonly participantBoxColor = '#26134b'
-    private readonly lineWidth = 4
-    private readonly columnWidth = 300
-    private readonly lineHeight = 130
-    private readonly topOffset = 50
-    private readonly bottomOffset = 100
-    private readonly participantsAxisCoordinateX: number[]
-    private readonly relationsAxisCoordinateY: number[]
-    private canvas: any
-    private ctx: any
-    private readonly participants: Participant[]
-    private readonly relations: Relation[]
-    private canvasWidth: number
-    private canvasHeight: number
+  private readonly participantsRenderer: ParticipantRenderer;
+  private readonly relationRenderer: RelationRenderer;
+  private readonly config: RendererConfig;
+  private readonly participants: Participant[];
+  private readonly relations: Relation[];
+  private canvas: NodeCanvas;
+  private context: CanvasRenderingContext2D;
 
-    constructor(diagram: DiagramType) {
-        this.participants = diagram.participants
-        this.relations = diagram.relations
-        this.participantsAxisCoordinateX = this.getParticipantsAxisCoordinateX()
-        this.relationsAxisCoordinateY = this.getRelationsAxisCoordinateX()
-        this.createBackground()
-    }
+  constructor(diagram: Diagram, config: RendererConfig) {
+    this.participantsRenderer = new ParticipantRenderer();
+    this.relationRenderer = new RelationRenderer();
+    this.participants = diagram.participants;
+    this.config = config;
+    this.relations = diagram.relations;
+    this.createCanvasAndContext(diagram.participants.length, diagram.relations.length, config);
+  }
 
-    private getParticipantsAxisCoordinateX () {
-        return this.participants.map((_, i) => (i === 0 ? this.columnWidth / 2 : i * this.columnWidth + this.columnWidth / 2))
-    }
-    private getRelationsAxisCoordinateX () {
-        return this.relations.map((_, i) => ( i===0 ? this.topOffset+100 :  i*70 + this.topOffset+100))
-    }
+  private createCanvasAndContext(participantsCount: number, relationsCount: number, config: RendererConfig): void {
+    const canvasWidth = participantsCount * config.columnWidth;
+    const canvasHeight = relationsCount * config.relationHeight + 60;
+    this.canvas = createCanvas(canvasWidth, canvasHeight);
+    this.context = this.canvas.getContext('2d');
+  }
 
-    private createBackground () {
-        this.canvasWidth = this.participants.length * this.columnWidth
-        this.canvasHeight = this.relations.length * this.lineHeight
-        this.canvas = createCanvas (this.canvasWidth, this.canvasHeight)
-        this.ctx = this.canvas.getContext('2d')
-        this.ctx.fillStyle = this.background
-        this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight)
-    }
+  private createBackground(context, canvasWidth: number, canvasHeight: number, backgroundColor: string): void {
+    context.fillStyle = backgroundColor;
+    context.fillRect(0, 0, canvasWidth, canvasHeight);
+  }
 
-    private addLineToCanvas (index, lineStart) {
-        this.ctx.strokeStyle = this.lineColor
-        this.ctx.lineWidth = this.lineWidth;
-        this.ctx.beginPath();
-        this.ctx.moveTo(lineStart, this.canvasHeight-this.bottomOffset);
-        this.ctx.lineTo(this.participantsAxisCoordinateX[index], this.topOffset);
-        this.ctx.stroke();
-    }
+  printDiagram(): Buffer {
+    this.createBackground(this.context, this.canvas.width, this.canvas.height, this.config.background);
+    this.participantsRenderer.renderParticipants(
+      this.context,
+      this.participants,
+      this.relations.length,
+      this.config.relationHeight,
+      this.config.participant,
+    );
+    this.relationRenderer.createRelation(this.context, this.relations, this.config.participant.width, this.config.relation);
+    const buffer = this.canvas.toBuffer('image/png');
 
-    private addArrowWithInscriptionToCanvas (fromx, fromy, tox, toy, text="lfgl") {
-        const headlen = 15; // length of head in pixels
-        const dx = tox - fromx;
-        const dy = toy - fromy;
-        const angle = Math.atan2(dy, dx);
-
-        this.ctx.strokeStyle = this.arrowColor
-        this.ctx.lineWidth = this.lineWidth;
-
-        this.ctx.font = this.font
-        this.ctx.textAlign = 'center'
-        this.ctx.textBaseline = 'bottom'
-        this.ctx.fillStyle = this.textColor
-
-        this.ctx.beginPath();
-        this.ctx.fillText(text, (fromx+tox)/2, toy)
-        this.ctx.moveTo(fromx, fromy);
-
-        this.ctx.lineTo(tox, toy);
-        this.ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
-        this.ctx.moveTo(tox, toy);
-        this.ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
-        this.ctx.stroke();
-    }
-
-    private addBoxWithInscription (text, baseCoordinate) {
-        this.ctx.font = this.font
-        this.ctx.textAlign = 'center'
-        this.ctx.textBaseline = 'top'
-        this.ctx.fillStyle = this.participantBoxColor
-
-        const textWidth = this.ctx.measureText(text).width
-        const rectangleWidth = textWidth +20
-
-        this.ctx.fillRect(baseCoordinate-rectangleWidth/2, this.topOffset, rectangleWidth, this.topOffset)
-        this.ctx.fillRect(baseCoordinate-rectangleWidth/2, this.canvasHeight-this.bottomOffset, rectangleWidth, this.topOffset)
-
-        this.ctx.fillStyle = this.textColor
-
-        this.ctx.fillText(text, baseCoordinate, 50)
-        this.ctx.fillText(text, baseCoordinate, this.canvasHeight-this.bottomOffset)
-    }
-
-    createParticipants () {
-        for (let i = 0; i < this.participants.length; i++) {
-            this.addLineToCanvas(i, this.participantsAxisCoordinateX[i])
-            this.addBoxWithInscription(this.participants[i].name, this.participantsAxisCoordinateX[i])
-        }
-    }
-
-    createRelation () {
-        for (let i = 0; i < this.relations.length; i++) {
-            const sourceParticipantCoordinateX = this.participantsAxisCoordinateX[this.relations[i].sourceParticipantIndex]
-            const targetParticipantCoordinateX = this.participantsAxisCoordinateX[this.relations[i].targetParticipantIndex]
-
-            this.addArrowWithInscriptionToCanvas(sourceParticipantCoordinateX,  this.relationsAxisCoordinateY[i], targetParticipantCoordinateX, this.relationsAxisCoordinateY[i], this.relations[i].name )
-        }
-    }
-
-    printDiagram() {
-        this.createParticipants()
-        this.createRelation()
-        const buffer = this.canvas.toBuffer('image/png')
-        fs.writeFileSync('./image.png', buffer)
-    }
+    return buffer;
+  }
 }
