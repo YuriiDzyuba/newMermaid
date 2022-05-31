@@ -1,9 +1,9 @@
 import { Renderer } from './renderer';
-import { MrdParser } from './mrdParser';
+import { mrdParser } from './mrdParser';
 import { rendererConfig } from './rendererConfig';
+import * as path from 'path';
 
-const parser = new MrdParser('/home/iurii/projects/newMermaid/src/source.mrd');
+const diagram = mrdParser(path.join(__dirname, 'source.mrd'));
 
-const diagram = parser.createDiagramStructure();
 const render = new Renderer(diagram, rendererConfig);
 render.printDiagram();
