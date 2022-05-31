@@ -1,19 +1,17 @@
 import { Relation } from './relation';
-import { RelationConfig } from '../types/rendererConfig.type';
+import { RelationConfig } from '../types/defaultRendererConfig.type';
 
 export class RelationRenderer {
   constructor(private context: CanvasRenderingContext2D) {}
 
-  createRelation(relations: Relation[], columnWidth: number, config: RelationConfig): void {
-    for (let i = 0; i < relations.length; i++) {
-      const sourceX = this.getParticipantCoordinateX(columnWidth, relations[i].sourceParticipant.order);
-      const sourceY = i === 0 ? 130 : i * 70 + 130;
-      const targetX = this.getParticipantCoordinateX(columnWidth, relations[i].targetParticipant.order);
-      const targetY = sourceY;
+  createRelation(relation: Relation, columnWidth: number, config: RelationConfig, order = 0): void {
+    const sourceX = this.getParticipantCoordinateX(columnWidth, relation.sourceParticipant.order);
+    const sourceY = order === 0 ? 130 : order * 70 + 130;
+    const targetX = this.getParticipantCoordinateX(columnWidth, relation.targetParticipant.order);
+    const targetY = sourceY;
 
-      this.addArrow(sourceX, sourceY, targetX, targetY, config);
-      this.addText(sourceX, targetX, targetY, relations[i].name, config);
-    }
+    this.addArrow(sourceX, sourceY, targetX, targetY, config);
+    this.addText(sourceX, targetX, targetY, relation.name, config);
   }
 
   private addArrow(lineFromX, lineFromY, lineToX, lineToY, config: RelationConfig): void {
@@ -29,9 +27,15 @@ export class RelationRenderer {
     this.context.moveTo(lineFromX, lineFromY);
     this.context.lineTo(lineToX, lineToY);
 
-    this.context.lineTo(lineToX - arrowHeadLength * Math.cos(angle - Math.PI / 6), lineToY - arrowHeadLength * Math.sin(angle - Math.PI / 6));
+    this.context.lineTo(
+      lineToX - arrowHeadLength * Math.cos(angle - Math.PI / 6),
+      lineToY - arrowHeadLength * Math.sin(angle - Math.PI / 6),
+    );
     this.context.moveTo(lineToX, lineToY);
-    this.context.lineTo(lineToX - arrowHeadLength * Math.cos(angle + Math.PI / 6), lineToY - arrowHeadLength * Math.sin(angle + Math.PI / 6));
+    this.context.lineTo(
+      lineToX - arrowHeadLength * Math.cos(angle + Math.PI / 6),
+      lineToY - arrowHeadLength * Math.sin(angle + Math.PI / 6),
+    );
     this.context.stroke();
   }
 

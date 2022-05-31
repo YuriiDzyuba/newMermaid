@@ -1,27 +1,20 @@
 import { Participant } from './participant';
-import { ParticipantConfig } from '../types/rendererConfig.type';
+import { ParticipantConfig } from '../types/defaultRendererConfig.type';
 
 export class ParticipantRenderer {
   constructor(private context: CanvasRenderingContext2D) {}
 
-  renderParticipants(
-      participants: Participant[],
-      rowsNum: number,
-      rowsHeight: number,
-      config: ParticipantConfig,
-  ): void {
-    for (let i = 0; i < participants.length; i++) {
-      const { lineColor, lineWidth, width, ...restConfig } = config;
+  createParticipant(participant: Participant, rowsNum: number, rowsHeight: number, config: ParticipantConfig, order: number = 0): void {
+    const { lineColor, lineWidth, width, ...restConfig } = config;
 
-      const topX = i === 0 ? width / 2 : i * width + width / 2;
-      const topY = 10;
-      const bottomX = topX;
-      const bottomY = rowsNum * rowsHeight;
+    const topX = order === 0 ? width / 2 : order * width + width / 2;
+    const topY = 10;
+    const bottomX = topX;
+    const bottomY = rowsNum * rowsHeight;
 
-      this.addLine({ topX, topY, bottomX, bottomY }, { lineColor, lineWidth });
-      this.addBoxWithText({ x: topX, y: topY }, participants[i].name, restConfig);
-      this.addBoxWithText( { x: bottomX, y: bottomY }, participants[i].name, restConfig);
-    }
+    this.addLine({ topX, topY, bottomX, bottomY }, { lineColor, lineWidth });
+    this.addBoxWithText({ x: topX, y: topY }, participant.name, restConfig);
+    this.addBoxWithText({ x: bottomX, y: bottomY }, participant.name, restConfig);
   }
 
   private addLine(coordinates, config) {
@@ -33,11 +26,7 @@ export class ParticipantRenderer {
     this.context.stroke();
   }
 
-  private addBoxWithText(
-    coordinates,
-    boxText,
-    config: Omit<ParticipantConfig, 'lineColor' | 'lineWidth' | 'width'>,
-  ): void {
+  private addBoxWithText(coordinates, boxText, config: Omit<ParticipantConfig, 'lineColor' | 'lineWidth' | 'width'>): void {
     this.context.font = config.font;
     this.context.textAlign = 'center';
     this.context.textBaseline = 'top';
@@ -52,6 +41,4 @@ export class ParticipantRenderer {
     this.context.fillStyle = config.textColor;
     this.context.fillText(boxText, coordinates.x, coordinates.y);
   }
-
-
 }
