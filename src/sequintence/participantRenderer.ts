@@ -2,42 +2,13 @@ import { Participant } from './participant';
 import { ParticipantConfig } from '../types/rendererConfig.type';
 
 export class ParticipantRenderer {
-  private addLine(context: CanvasRenderingContext2D, coordinates, config) {
-    context.strokeStyle = config.lineColor;
-    context.lineWidth = config.lineWidth;
-    context.beginPath();
-    context.moveTo(coordinates.topX, coordinates.topY);
-    context.lineTo(coordinates.bottomX, coordinates.bottomY);
-    context.stroke();
-  }
-
-  private addBoxWithText(
-    context: CanvasRenderingContext2D,
-    coordinates,
-    boxText,
-    config: Omit<ParticipantConfig, 'lineColor' | 'lineWidth' | 'width'>,
-  ): void {
-    context.font = config.font;
-    context.textAlign = 'center';
-    context.textBaseline = 'top';
-    context.fillStyle = config.boxColor;
-
-    const textWidth = context.measureText(boxText).width;
-    const rectangleWidth = textWidth + 20;
-    const rectangleHeight = config.rectangleHeight;
-    const rectangleStartTopX = coordinates.x - rectangleWidth / 2;
-
-    context.fillRect(rectangleStartTopX, coordinates.y, rectangleWidth, rectangleHeight);
-    context.fillStyle = config.textColor;
-    context.fillText(boxText, coordinates.x, coordinates.y);
-  }
+  constructor(private context: CanvasRenderingContext2D) {}
 
   renderParticipants(
-    context: CanvasRenderingContext2D,
-    participants: Participant[],
-    rowsNum: number,
-    rowsHeight: number,
-    config: ParticipantConfig,
+      participants: Participant[],
+      rowsNum: number,
+      rowsHeight: number,
+      config: ParticipantConfig,
   ): void {
     for (let i = 0; i < participants.length; i++) {
       const { lineColor, lineWidth, width, ...restConfig } = config;
@@ -47,9 +18,40 @@ export class ParticipantRenderer {
       const bottomX = topX;
       const bottomY = rowsNum * rowsHeight;
 
-      this.addLine(context, { topX, topY, bottomX, bottomY }, { lineColor, lineWidth });
-      this.addBoxWithText(context, { x: topX, y: topY }, participants[i].name, restConfig);
-      this.addBoxWithText(context, { x: bottomX, y: bottomY }, participants[i].name, restConfig);
+      this.addLine({ topX, topY, bottomX, bottomY }, { lineColor, lineWidth });
+      this.addBoxWithText({ x: topX, y: topY }, participants[i].name, restConfig);
+      this.addBoxWithText( { x: bottomX, y: bottomY }, participants[i].name, restConfig);
     }
   }
+
+  private addLine(coordinates, config) {
+    this.context.strokeStyle = config.lineColor;
+    this.context.lineWidth = config.lineWidth;
+    this.context.beginPath();
+    this.context.moveTo(coordinates.topX, coordinates.topY);
+    this.context.lineTo(coordinates.bottomX, coordinates.bottomY);
+    this.context.stroke();
+  }
+
+  private addBoxWithText(
+    coordinates,
+    boxText,
+    config: Omit<ParticipantConfig, 'lineColor' | 'lineWidth' | 'width'>,
+  ): void {
+    this.context.font = config.font;
+    this.context.textAlign = 'center';
+    this.context.textBaseline = 'top';
+    this.context.fillStyle = config.boxColor;
+
+    const textWidth = this.context.measureText(boxText).width;
+    const rectangleWidth = textWidth + 20;
+    const rectangleHeight = config.rectangleHeight;
+    const rectangleStartTopX = coordinates.x - rectangleWidth / 2;
+
+    this.context.fillRect(rectangleStartTopX, coordinates.y, rectangleWidth, rectangleHeight);
+    this.context.fillStyle = config.textColor;
+    this.context.fillText(boxText, coordinates.x, coordinates.y);
+  }
+
+
 }
