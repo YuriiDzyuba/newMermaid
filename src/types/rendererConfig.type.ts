@@ -1,4 +1,10 @@
 export type ParticipantConfig = {
+  /** padding top px*/
+  paddingTop: number;
+
+  /** padding bottom px*/
+  paddingBottom: number;
+
   /** canvas with px */
   width: number;
 
@@ -22,6 +28,12 @@ export type ParticipantConfig = {
 };
 
 export type RelationConfig = {
+  /** padding top px*/
+  paddingTop: number;
+
+  /** one relation row height px*/
+  rowHeight: number;
+
   /** line and arrow color Hex*/
   arrowColor: string;
 
@@ -35,15 +47,9 @@ export type RelationConfig = {
   font: string;
 };
 
-export type rendererConfig = {
+export type RendererConfig = {
   /** canvas background*/
   background: string;
-
-  /** one participant column width px*/
-  participantWidth: number;
-
-  /** one relation row height px*/
-  relationHeight: number;
 
   /** configs for participant instance*/
   participant: ParticipantConfig;
