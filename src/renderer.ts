@@ -32,7 +32,7 @@ export class Renderer {
     this.addRelationsToCanvas(this.relations, this.config);
 
     const buffer = this.canvas.toBuffer('image/png');
-    fs.writeFileSync('out.png', buffer);
+    // fs.writeFileSync('out.png', buffer);
     return buffer;
   }
 
@@ -51,7 +51,7 @@ export class Renderer {
       topX: config.participant.width / 2,
       topY: config.participant.paddingTop,
       bottomX: config.participant.width / 2,
-      bottomY: this.canvas.height - config.participant.paddingBottom,
+      bottomY: this.canvas.height - config.participant.paddingBottom - config.participant.boxHeight,
     };
 
     for (const participant of participants) {
@@ -79,7 +79,7 @@ export class Renderer {
 
   private createCanvasAndContext(participantsCount: number, relationsCount: number, config: RendererConfig): void {
     const canvasWidth = participantsCount * config.participant.width;
-    const canvasHeight = relationsCount * config.relation.rowHeight + config.relation.rowHeight;
+    const canvasHeight = relationsCount * config.relation.rowHeight + config.participant.boxHeight*2 + config.participant.paddingTop+ config.participant.paddingBottom;
     this.canvas = createCanvas(canvasWidth, canvasHeight);
     this.context = this.canvas.getContext('2d');
   }

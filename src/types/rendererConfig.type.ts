@@ -17,6 +17,9 @@ export type ParticipantConfig = {
   /** participant text box color Hex*/
   boxColor: string;
 
+  /** corner radius of text box px*/
+  boxCornerRadius: number;
+
   /** line color Hex*/
   lineColor: string;
 

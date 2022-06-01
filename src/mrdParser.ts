@@ -2,15 +2,14 @@ import * as fs from 'fs';
 
 import { Participant } from './sequintence/participant';
 import { Relation } from './sequintence/relation';
-import { Diagram } from "./types/diagram.type";
-
+import { Diagram } from './types/diagram.type';
 
 type sourceAndTargetParticipants = {
-  sourceName: string,
-  targetName: string
-}
+  sourceName: string;
+  targetName: string;
+};
 
-export function mrdParser(pathToFile: string):Diagram {
+export function mrdParser(pathToFile: string): Diagram {
   const participants = [];
   const relations = [];
 
