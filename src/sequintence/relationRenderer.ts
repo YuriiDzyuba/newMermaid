@@ -1,14 +1,11 @@
 import { Relation } from './relation';
-import { RelationConfig } from '../types/defaultRendererConfig.type';
+import { RelationConfig } from '../types/rendererConfig.type';
 
 export class RelationRenderer {
   constructor(private context: CanvasRenderingContext2D) {}
 
-  createRelation(relation: Relation, columnWidth: number, config: RelationConfig, order = 0): void {
-    const sourceX = this.getParticipantCoordinateX(columnWidth, relation.sourceParticipant.order);
-    const sourceY = order === 0 ? 130 : order * 70 + 130;
-    const targetX = this.getParticipantCoordinateX(columnWidth, relation.targetParticipant.order);
-    const targetY = sourceY;
+  createRelation(relation: Relation, coordinates, config: RelationConfig): void {
+    const { sourceX, sourceY, targetX, targetY } = coordinates;
 
     this.addArrow(sourceX, sourceY, targetX, targetY, config);
     this.addText(sourceX, targetX, targetY, relation.name, config);
@@ -45,9 +42,5 @@ export class RelationRenderer {
     this.context.textBaseline = 'bottom';
     this.context.fillStyle = config.textColor;
     this.context.fillText(text, (lineFromX + lineToX) / 2, lineToY);
-  }
-
-  private getParticipantCoordinateX(columnWidth: number, i: number): number {
-    return i === 0 ? columnWidth / 2 : i * columnWidth + columnWidth / 2;
   }
 }
