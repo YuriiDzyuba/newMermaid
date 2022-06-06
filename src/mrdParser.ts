@@ -2,7 +2,7 @@ import { Participant } from './sequintence/participant';
 import { Relation } from './sequintence/relation';
 import { Diagram } from './types/diagram.type';
 
-type sourceAndTargetParticipants = {
+type SourceAndTargetParticipants = {
   sourceName: string;
   targetName: string;
 };
@@ -39,8 +39,9 @@ export function mrdParser(mdr): Diagram {
   return { participants, relations };
 }
 
-function getSourceAndTargetParticipantNames(string: string): sourceAndTargetParticipants {
-  let relationDirection = string.substring(string.indexOf(`(`) + 1, string.lastIndexOf(`)`));
+
+function getSourceAndTargetParticipantNames(nodeValue: string): SourceAndTargetParticipants {
+  let relationDirection = nodeValue.substring(nodeValue.indexOf(`(`) + 1, nodeValue.lastIndexOf(`)`));
 
   const splittedDirection = relationDirection.split('>>');
   const sourceName = splittedDirection[0].trim();
