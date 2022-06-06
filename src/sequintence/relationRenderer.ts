@@ -1,10 +1,11 @@
 import { Relation } from './relation';
 import { RelationConfig } from '../types/rendererConfig.type';
+import { RelationCoordinates } from "../types/relationCoordinates";
 
 export class RelationRenderer {
   constructor(private context: CanvasRenderingContext2D) {}
 
-  render(relation: Relation, coordinates, config: RelationConfig): void {
+  render(relation: Relation, coordinates: RelationCoordinates, config: RelationConfig): void {
     const { sourceX, sourceY, targetX, targetY } = coordinates;
 
     this.addArrow(sourceX, sourceY, targetX, targetY, config);

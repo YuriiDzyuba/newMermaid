@@ -7,6 +7,8 @@ import { ParticipantRenderer } from './sequintence/participantRenderer';
 import { RelationRenderer } from './sequintence/relationRenderer';
 import { Participant } from './sequintence/participant';
 import { Relation } from './sequintence/relation';
+import {ParticipantCoordinates} from "./types/participantCoordinates";
+import {RelationCoordinates} from "./types/relationCoordinates";
 
 export class Renderer {
   private readonly participantsRenderer: ParticipantRenderer;
@@ -47,7 +49,7 @@ export class Renderer {
   }
 
   private addParticipantsToCanvas(participants: Participant[], config: RendererConfig): void {
-    const coordinates = {
+    const coordinates: ParticipantCoordinates = {
       topX: config.participant.width / 2,
       topY: config.participant.paddingTop,
       bottomX: config.participant.width / 2,
@@ -63,7 +65,7 @@ export class Renderer {
 
   private addRelationsToCanvas(relations: Relation[], config: RendererConfig) {
     for (const [order, relation] of relations.entries()) {
-      const coordinates = {
+      const coordinates: RelationCoordinates = {
         sourceX: this.getParticipantCoordinateX(config.participant.width, relation.sourceParticipant.order),
         sourceY: order === 0 ? config.relation.paddingTop : order * config.relation.rowHeight + config.relation.paddingTop,
         targetX: this.getParticipantCoordinateX(config.participant.width, relation.targetParticipant.order),

@@ -1,10 +1,11 @@
 import { Participant } from './participant';
 import { ParticipantConfig } from '../types/rendererConfig.type';
+import {ParticipantCoordinates} from "../types/participantCoordinates";
 
 export class ParticipantRenderer {
   constructor(private context: CanvasRenderingContext2D) {}
 
-  render(participant: Participant, coordinates, config: ParticipantConfig): void {
+  render(participant: Participant, coordinates: ParticipantCoordinates, config: ParticipantConfig): void {
     const { lineColor, lineWidth, width, paddingTop, ...restConfig } = config;
     const { topX, topY, bottomX, bottomY } = coordinates;
 
