@@ -1,5 +1,3 @@
-import * as fs from 'fs';
-
 import { Participant } from './sequintence/participant';
 import { Relation } from './sequintence/relation';
 import { Diagram } from './types/diagram.type';
@@ -9,24 +7,23 @@ type sourceAndTargetParticipants = {
   targetName: string;
 };
 
-export function mrdParser(pathToFile: string): Diagram {
+export function mrdParser(mdr): Diagram {
   const participants = [];
   const relations = [];
 
-  const fileContent = fs.readFileSync(pathToFile, 'utf-8');
-  const rows = fileContent.split(`\n`);
+  const rows = mdr.split(`\n`);
   const [diagramType, ...diagramBody] = rows.map((e) => e.trim());
 
   if (diagramType != 'sequenceDiagram') {
     throw new Error('unimplemented diagram format');
   }
 
-  diagramBody.forEach((e, i) => {
-    let [nodeType, nodeValue] = e.split(':');
+  for (const [rowIndex, row] of diagramBody.entries()) {
+    let [nodeType, nodeValue] = row.split(':');
 
     switch (nodeType.trim()) {
       case 'part':
-        participants.push(new Participant(nodeValue.trim(), i));
+        participants.push(new Participant(nodeValue.trim(), rowIndex));
         break;
       case 'rel':
         const { sourceName, targetName } = getSourceAndTargetParticipantNames(nodeValue);
@@ -37,7 +34,7 @@ export function mrdParser(pathToFile: string): Diagram {
         relations.push(new Relation(sourceParticipant, targetParticipant, relationName));
         break;
     }
-  });
+  };
 
   return { participants, relations };
 }
