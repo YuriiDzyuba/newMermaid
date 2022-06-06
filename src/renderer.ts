@@ -34,7 +34,7 @@ export class Renderer {
     this.addRelationsToCanvas(this.relations, this.config);
 
     const buffer = this.canvas.toBuffer('image/png');
-    fs.writeFileSync('out.png', buffer);
+
     return buffer;
   }
 
