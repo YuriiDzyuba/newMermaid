@@ -4,7 +4,7 @@ import { RelationConfig } from '../types/rendererConfig.type';
 export class RelationRenderer {
   constructor(private context: CanvasRenderingContext2D) {}
 
-  createRelation(relation: Relation, coordinates, config: RelationConfig): void {
+  render(relation: Relation, coordinates, config: RelationConfig): void {
     const { sourceX, sourceY, targetX, targetY } = coordinates;
 
     this.addArrow(sourceX, sourceY, targetX, targetY, config);

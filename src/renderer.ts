@@ -32,7 +32,7 @@ export class Renderer {
     this.addRelationsToCanvas(this.relations, this.config);
 
     const buffer = this.canvas.toBuffer('image/png');
-    // fs.writeFileSync('out.png', buffer);
+    fs.writeFileSync('out.png', buffer);
     return buffer;
   }
 
@@ -55,7 +55,7 @@ export class Renderer {
     };
 
     for (const participant of participants) {
-      this.participantsRenderer.createParticipant(participant, coordinates, config.participant);
+      this.participantsRenderer.render(participant, coordinates, config.participant);
       coordinates.topX = coordinates.topX + config.participant.width;
       coordinates.bottomX = coordinates.topX;
     }
@@ -69,7 +69,7 @@ export class Renderer {
         targetX: this.getParticipantCoordinateX(config.participant.width, relation.targetParticipant.order),
         targetY: order === 0 ? config.relation.paddingTop : order * config.relation.rowHeight + config.relation.paddingTop,
       };
-      this.relationRenderer.createRelation(relation, coordinates, config.relation);
+      this.relationRenderer.render(relation, coordinates, config.relation);
     }
   }
 

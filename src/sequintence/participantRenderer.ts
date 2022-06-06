@@ -4,7 +4,7 @@ import { ParticipantConfig } from '../types/rendererConfig.type';
 export class ParticipantRenderer {
   constructor(private context: CanvasRenderingContext2D) {}
 
-  createParticipant(participant: Participant, coordinates, config: ParticipantConfig): void {
+  render(participant: Participant, coordinates, config: ParticipantConfig): void {
     const { lineColor, lineWidth, width, paddingTop, ...restConfig } = config;
     const { topX, topY, bottomX, bottomY } = coordinates;
 
