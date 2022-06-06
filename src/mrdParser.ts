@@ -29,10 +29,10 @@ export function mrdParser(pathToFile: string): Diagram {
         participants.push(new Participant(nodeValue.trim(), i));
         break;
       case 'rel':
-        const { sourceName, targetName } = _getSourceAndTargetParticipantNames(nodeValue);
-        const relationName = _getRelationName(nodeValue);
-        const sourceParticipant = _getParticipantByName(sourceName, participants);
-        const targetParticipant = _getParticipantByName(targetName, participants);
+        const { sourceName, targetName } = getSourceAndTargetParticipantNames(nodeValue);
+        const relationName = getRelationName(nodeValue);
+        const sourceParticipant = getParticipantByName(sourceName, participants);
+        const targetParticipant = getParticipantByName(targetName, participants);
 
         relations.push(new Relation(sourceParticipant, targetParticipant, relationName));
         break;
@@ -42,7 +42,7 @@ export function mrdParser(pathToFile: string): Diagram {
   return { participants, relations };
 }
 
-function _getSourceAndTargetParticipantNames(string: string): sourceAndTargetParticipants {
+function getSourceAndTargetParticipantNames(string: string): sourceAndTargetParticipants {
   let relationDirection = string.substring(string.indexOf(`(`) + 1, string.lastIndexOf(`)`));
 
   const splittedDirection = relationDirection.split('>>');
@@ -52,7 +52,7 @@ function _getSourceAndTargetParticipantNames(string: string): sourceAndTargetPar
   return { sourceName, targetName };
 }
 
-function _getParticipantByName(participanName: string, participants: Participant[]): Participant {
+function getParticipantByName(participanName: string, participants: Participant[]): Participant {
   const foundedParticipant = participants.find((e) => e.name === participanName);
 
   if (!foundedParticipant) throw new Error(`cant find participant -- ${foundedParticipant}`);
@@ -60,6 +60,6 @@ function _getParticipantByName(participanName: string, participants: Participant
   return foundedParticipant;
 }
 
-function _getRelationName(string: string): string {
+function getRelationName(string: string): string {
   return string.substring(string.indexOf(`"`) + 1, string.lastIndexOf(`"`));
 }
