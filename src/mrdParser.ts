@@ -22,15 +22,15 @@ export function mrdParser(pathToFile: string): Diagram {
   }
 
   diagramBody.forEach((e, i) => {
-    let splittedString = e.split(':');
+    let [nodeType, nodeValue] = e.split(':');
 
-    switch (splittedString[0].trim()) {
+    switch (nodeType.trim()) {
       case 'part':
-        participants.push(new Participant(splittedString[1].trim(), i));
+        participants.push(new Participant(nodeValue.trim(), i));
         break;
       case 'rel':
-        const { sourceName, targetName } = _getSourceAndTargetParticipantNames(splittedString[1]);
-        const relationName = _getRelationName(splittedString[1]);
+        const { sourceName, targetName } = _getSourceAndTargetParticipantNames(nodeValue);
+        const relationName = _getRelationName(nodeValue);
         const sourceParticipant = _getParticipantByName(sourceName, participants);
         const targetParticipant = _getParticipantByName(targetName, participants);
 
