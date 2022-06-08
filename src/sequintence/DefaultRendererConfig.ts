@@ -1,22 +1,22 @@
-import { RendererConfig } from './types/rendererConfig.type';
+import { RendererConfig } from '../types/rendererConfig.type';
 
-export const rendererConfig: RendererConfig = {
+export const defaultRendererConfig: RendererConfig = {
   background: '#acc4e2',
-  textColor: '#fff',
-  lineColor: '#8165b8',
-  participantBoxColor: '#26134b',
-  columnWidth: 300,
-  relationHeight: 80,
   participant: {
+    paddingTop: 20,
+    paddingBottom: 20,
     width: 300,
     textColor: '#ffffff',
-    rectangleHeight: 45,
+    boxHeight: 65,
     boxColor: '#26134b',
-    lineColor: '#8165b8',
+    boxCornerRadius: 45,
+    lineColor: '#26134b',
     lineWidth: 4,
     font: 'bold 20pt Menlo',
   },
   relation: {
+    paddingTop: 130,
+    rowHeight: 55,
     arrowColor: '#950e0e',
     textColor: '#950e0e',
     lineWidth: 2,

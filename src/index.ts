@@ -1,9 +1,14 @@
+import * as path from 'path';
+import * as fs from "fs";
+
 import { Renderer } from './renderer';
-import { MrdParser } from './mrdParser';
-import { rendererConfig } from './rendererConfig';
+import { mrdParser } from './mrdParser';
+import { defaultRendererConfig } from './sequintence/DefaultRendererConfig';
 
-const parser = new MrdParser('/home/iurii/projects/newMermaid/src/source.mrd');
 
-const diagram = parser.createDiagramStructure();
-const render = new Renderer(diagram, rendererConfig);
+const mdrSourceContent = fs.readFileSync(path.join(__dirname, 'source.mrd'), 'utf-8');
+
+const diagram = mrdParser(mdrSourceContent);
+
+const render = new Renderer(diagram, defaultRendererConfig);
 render.printDiagram();

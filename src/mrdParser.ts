@@ -1,79 +1,63 @@
-import * as fs from 'fs';
-
 import { Participant } from './sequintence/participant';
 import { Relation } from './sequintence/relation';
+import { Diagram } from './types/diagram.type';
 
-export class MrdParser {
-  private participants: Participant[];
-  private relations: Relation[];
+type SourceAndTargetParticipants = {
+  sourceName: string;
+  targetName: string;
+};
 
-  constructor(path: string) {
-    this.parseMrd(path);
+export function mrdParser(mdr): Diagram {
+  const participants = [];
+  const relations = [];
+
+  const rows = mdr.split(`\n`);
+  const [diagramType, ...diagramBody] = rows.map((e) => e.trim());
+
+  if (diagramType != 'sequenceDiagram') {
+    throw new Error('unimplemented diagram format');
   }
 
-  private getSourceAndTargetParticipantNames(string) {
-    let relationDirection = string.substring(string.indexOf(`(`) + 1, string.lastIndexOf(`)`));
+  for (const [rowIndex, row] of diagramBody.entries()) {
+    let [nodeType, nodeValue] = row.split(':');
 
-    const splittedDirection = relationDirection.split('>>');
-    const sourceName = splittedDirection[0].trim();
-    const targetName = splittedDirection.pop().trim();
+    switch (nodeType.trim()) {
+      case 'part':
+        participants.push(new Participant(nodeValue.trim(), rowIndex));
+        break;
+      case 'rel':
+        const { sourceName, targetName } = getSourceAndTargetParticipantNames(nodeValue);
+        const relationName = getRelationName(nodeValue);
+        const sourceParticipant = getParticipantByName(sourceName, participants);
+        const targetParticipant = getParticipantByName(targetName, participants);
 
-    return {
-      sourceName,
-      targetName,
-    };
-  }
-
-  private getParticipantByName(name) {
-    const foundedParticipant = this.participants.find((e) => e.name === name);
-
-    if (!foundedParticipant) throw new Error(`cant find participant -- ${foundedParticipant}`);
-
-    return foundedParticipant;
-  }
-
-  private getRelationName(string) {
-    return string.substring(string.indexOf(`"`) + 1, string.lastIndexOf(`"`));
-  }
-
-  parseMrd(pathToFile) {
-    const fileContent = fs.readFileSync(pathToFile, 'utf-8');
-    const splitted = fileContent.split(`\n`);
-    const [diagramType, ...diagramBody] = splitted.map((e) => e.trim());
-
-    if (diagramType != 'sequenceDiagram') {
-      throw new Error('unimplemented diagram format');
+        relations.push(new Relation(sourceParticipant, targetParticipant, relationName));
+        break;
     }
+  };
 
-    diagramBody.forEach((e, i) => {
-      let splittedString = e.split(':');
+  return { participants, relations };
+}
 
-      switch (splittedString[0].trim()) {
-        case 'part':
-          this.participants
-            ? this.participants.push(new Participant(splittedString[1].trim(), i))
-            : (this.participants = [new Participant(splittedString[1].trim(), i)]);
-          break;
-        case 'rel':
-          const { sourceName, targetName } = this.getSourceAndTargetParticipantNames(splittedString[1]);
-          const relationName = this.getRelationName(splittedString[1]);
-          const sourceParticipant = this.getParticipantByName(sourceName);
-          const targetParticipant = this.getParticipantByName(targetName);
 
-          if (this.relations) {
-            this.relations.push(new Relation(sourceParticipant, targetParticipant, relationName));
-          } else {
-            this.relations = [new Relation(sourceParticipant, targetParticipant, relationName)];
-          }
-          break;
-      }
-    });
-  }
+function getSourceAndTargetParticipantNames(nodeValue: string): SourceAndTargetParticipants {
+  let relationDirection = nodeValue.substring(nodeValue.indexOf(`(`) + 1, nodeValue.lastIndexOf(`)`));
 
-  createDiagramStructure() {
-    return {
-      participants: this.participants,
-      relations: this.relations,
-    };
-  }
+  const splittedDirection = relationDirection.split('>>');
+  const sourceName = splittedDirection[0].trim();
+  const targetName = splittedDirection.pop().trim();
+
+  return { sourceName, targetName };
+}
+
+function getParticipantByName(participanName: string, participants: Participant[]): Participant {
+  const foundedParticipant = participants.find((e) => e.name === participanName);
+
+  if (!foundedParticipant) throw new Error(`cant find participant -- ${foundedParticipant}`);
+
+  return foundedParticipant;
+}
+
+function getRelationName(string: string): string {
+  return string.substring(string.indexOf(`"`) + 1, string.lastIndexOf(`"`));
 }
