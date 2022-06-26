@@ -1,6 +1,6 @@
 import { Relation } from './relation';
-import { RelationConfig } from '../types/rendererConfig.type';
-import { RelationCoordinates } from "../types/relationCoordinates";
+import { RelationConfig } from './types/rendererConfig.type';
+import { RelationCoordinates } from "./types/relationCoordinates";
 
 export class RelationRenderer {
   constructor(private context: CanvasRenderingContext2D) {}

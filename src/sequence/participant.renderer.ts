@@ -1,6 +1,6 @@
 import { Participant } from './participant';
-import { ParticipantConfig } from '../types/rendererConfig.type';
-import {ParticipantCoordinates} from "../types/participantCoordinates";
+import { ParticipantConfig } from './types/rendererConfig.type';
+import {ParticipantCoordinates} from "./types/participantCoordinates";
 
 export class ParticipantRenderer {
   constructor(private context: CanvasRenderingContext2D) {}

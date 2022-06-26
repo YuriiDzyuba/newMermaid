@@ -1,16 +1,16 @@
 import * as fs from 'fs';
 import { Canvas, createCanvas } from 'canvas';
 
-import { Diagram } from './types/diagram.type';
+import { ParsedSequenceMrd } from './types/parsedSequenceMrd';
 import { RendererConfig } from './types/rendererConfig.type';
-import { ParticipantRenderer } from './sequintence/participantRenderer';
-import { RelationRenderer } from './sequintence/relationRenderer';
-import { Participant } from './sequintence/participant';
-import { Relation } from './sequintence/relation';
+import { ParticipantRenderer } from './participant.renderer';
+import { RelationRenderer } from './relation.renderer';
+import { Participant } from './participant';
+import { Relation } from './relation';
 import {ParticipantCoordinates} from "./types/participantCoordinates";
 import {RelationCoordinates} from "./types/relationCoordinates";
 
-export class Renderer {
+export class SequenceRenderer {
   private readonly participantsRenderer: ParticipantRenderer;
   private readonly relationRenderer: RelationRenderer;
   private readonly config: RendererConfig;
@@ -19,7 +19,7 @@ export class Renderer {
   private canvas: Canvas;
   private context: CanvasRenderingContext2D;
 
-  constructor(diagram: Diagram, config: RendererConfig) {
+  constructor(diagram: ParsedSequenceMrd, config: RendererConfig) {
     this.participants = diagram.participants;
     this.config = config;
     this.relations = diagram.relations;
@@ -34,7 +34,7 @@ export class Renderer {
     this.addRelationsToCanvas(this.relations, this.config);
 
     const buffer = this.canvas.toBuffer('image/png');
-
+    fs.writeFileSync('./image.png', buffer)
     return buffer;
   }
 

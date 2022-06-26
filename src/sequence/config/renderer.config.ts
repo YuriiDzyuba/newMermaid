@@ -1,6 +1,6 @@
 import { RendererConfig } from '../types/rendererConfig.type';
 
-export const defaultRendererConfig: RendererConfig = {
+export const rendererConfig: RendererConfig = {
   background: '#acc4e2',
   participant: {
     paddingTop: 20,

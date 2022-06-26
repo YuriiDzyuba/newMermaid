@@ -1,24 +1,18 @@
-import { Participant } from './sequintence/participant';
-import { Relation } from './sequintence/relation';
-import { Diagram } from './types/diagram.type';
+import { Participant } from './participant';
+import { Relation } from './relation';
+import { ParsedSequenceMrd } from './types/parsedSequenceMrd';
 
 type SourceAndTargetParticipants = {
   sourceName: string;
   targetName: string;
 };
 
-export function mrdParser(mdr): Diagram {
+export function sequenceSyntaxParser(mdrBody: string[]): ParsedSequenceMrd {
   const participants = [];
   const relations = [];
 
-  const rows = mdr.split(`\n`);
-  const [diagramType, ...diagramBody] = rows.map((e) => e.trim());
 
-  if (diagramType != 'sequenceDiagram') {
-    throw new Error('unimplemented diagram format');
-  }
-
-  for (const [rowIndex, row] of diagramBody.entries()) {
+  for (const [rowIndex, row] of mdrBody.entries()) {
     let [nodeType, nodeValue] = row.split(':');
 
     switch (nodeType.trim()) {
