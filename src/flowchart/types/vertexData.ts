@@ -1,0 +1,1 @@
+export type VertexData = { name: string, id: number | null }
