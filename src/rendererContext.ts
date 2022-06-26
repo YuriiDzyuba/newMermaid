@@ -25,7 +25,7 @@ export class RendererContext {
     }
   }
 
-  render (): Buffer {
+  getDiagramBuffer (): Buffer {
     return this.renderer.render()
   }
 }
