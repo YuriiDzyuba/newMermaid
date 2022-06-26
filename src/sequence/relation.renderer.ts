@@ -1,5 +1,5 @@
 import { Relation } from './relation';
-import { RelationConfig } from './types/rendererConfig.type';
+import { RelationConfig } from './types/sequenceRendererConfig.type';
 import { RelationCoordinates } from "./types/relationCoordinates";
 
 export class RelationRenderer {

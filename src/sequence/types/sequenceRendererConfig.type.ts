@@ -50,7 +50,7 @@ export type RelationConfig = {
   font: string;
 };
 
-export type RendererConfig = {
+export type SequenceRendererConfig = {
   /** canvas background*/
   background: string;
 

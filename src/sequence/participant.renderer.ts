@@ -1,5 +1,5 @@
 import { Participant } from './participant';
-import { ParticipantConfig } from './types/rendererConfig.type';
+import { ParticipantConfig } from './types/sequenceRendererConfig.type';
 import {ParticipantCoordinates} from "./types/participantCoordinates";
 
 export class ParticipantRenderer {

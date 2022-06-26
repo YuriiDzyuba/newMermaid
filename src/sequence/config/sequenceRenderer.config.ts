@@ -1,6 +1,6 @@
-import { RendererConfig } from '../types/rendererConfig.type';
+import { SequenceRendererConfig } from '../types/sequenceRendererConfig.type';
 
-export const rendererConfig: RendererConfig = {
+export const sequenceRendererConfig: SequenceRendererConfig = {
   background: '#acc4e2',
   participant: {
     paddingTop: 20,
