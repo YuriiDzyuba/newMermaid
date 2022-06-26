@@ -1,14 +1,18 @@
 import * as path from 'path';
 import * as fs from "fs";
 
-import { Renderer } from './renderer';
-import { mrdParser } from './mrdParser';
-import { defaultRendererConfig } from './sequintence/DefaultRendererConfig';
+import { SequenceRenderer } from './sequence/sequence.renderer';
+import { rendererConfig } from './sequence/config/renderer.config';
+import { syntaxParser } from './syntaxParser';
+import { getSyntaxAndBody } from './getSyntaxAndBody';
+import { ParsedSequenceMrd } from './sequence/types/parsedSequenceMrd';
 
 
-const mdrSourceContent = fs.readFileSync(path.join(__dirname, 'source.mrd'), 'utf-8');
+const mdrSourceContent = fs.readFileSync(path.join(__dirname, 'flowchartSource.mrd'), 'utf-8');
 
-const diagram = mrdParser(mdrSourceContent);
+const { syntax, body } = getSyntaxAndBody(mdrSourceContent);
 
-const render = new Renderer(diagram, defaultRendererConfig);
+const parsedMrd = syntaxParser(syntax, body);
+
+const render = new SequenceRenderer(parsedMrd as ParsedSequenceMrd, rendererConfig);
 render.printDiagram();
