@@ -1,4 +1,4 @@
-sequenceDiagram
+sequence
     part: Client
     part: Client_Interceptor
     part: сеть

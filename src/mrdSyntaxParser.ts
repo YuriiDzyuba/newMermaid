@@ -1,6 +1,6 @@
 import { Syntax } from './types/syntax';
-import { sequenceSyntaxParser } from './sequence/sequenceSyntax.parser';
-import { flowchartSyntaxParser } from './flowchart/flowchartSyntaxParser';
+import { sequenceSyntaxParser } from './sequence/sequence.syntaxParser';
+import { flowchartSyntaxParser } from './flowchart/flowchart.syntaxParser';
 import { ParsedMrd } from './types/parsedMrd';
 
 export const mrdSyntaxParser = (syntax, body): ParsedMrd => {
